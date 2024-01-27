@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_
 #define GAMEOBJECT_
 
-#include "GameObjectPhysics.h"
+#include "../physics/GameObjectPhysics.h"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>

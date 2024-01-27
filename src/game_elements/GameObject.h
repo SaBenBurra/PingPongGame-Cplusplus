@@ -1,6 +1,7 @@
 #ifndef GAMEOBJECT_
 #define GAMEOBJECT_
 
+#include "GameObjectPhysics.h"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -13,6 +14,7 @@ public:
   float positionX, positionY;
   float windowSizeX;
   float windowSizeY;
+  GameObjectPhysics physics;
 
   GameObject(sf::Shape *shape, sf::Vector2u windowSize) {
     this->shape = shape;

@@ -1,11 +1,8 @@
-#include "game_elements/Ball.h"
-#include "game_elements/Bat.h"
-#include "game_elements/GameObject.h"
+#include "game_elements/GameObjectManager.h"
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
-#include <iostream>
-#include <vector>
+#include <thread>
 
 class GameManager {
 
@@ -16,13 +13,26 @@ public:
 
     window.create(sf::VideoMode(), "Ping Pong Game", sf::Style::Fullscreen);
     window.setVerticalSyncEnabled(true);
-    window.clear(sf::Color::Black);
 
     return this;
   }
 
   void run() {
+    gameObjectManager.createGameObjects(&window);
+
+    physicsManager.setRandomVelocityToGameObject(
+        &gameObjectManager.gameObjects[0]);
+
+    std::chrono::high_resolution_clock::time_point start;
+    std::chrono::high_resolution_clock::time_point end;
+
     while (window.isOpen()) {
+      start = std::chrono::high_resolution_clock::now();
+      window.clear(sf::Color::Black);
+
+      windowSizeX = window.getSize().x;
+      windowSizeY = window.getSize().y;
+
       sf::Event event;
 
       while (window.pollEvent(event)) {
@@ -31,32 +41,26 @@ public:
         }
       }
 
-      createGameObjects();
-      drawGameObjects();
+      end = std::chrono::high_resolution_clock::now();
+      float fps = (float)1e9 /
+                  (float)std::chrono::duration_cast<std::chrono::nanoseconds>(
+                      end - start)
+                      .count();
+      float timeDelta = 1 / fps;
+
+      physicsManager.renderPhysics(&gameObjectManager.gameObjects, timeDelta);
+
+      gameObjectManager.drawGameObjects(&window);
+
       window.display();
     }
   }
 
 private:
+  GameObjectManager gameObjectManager;
+  PhysicsManager physicsManager;
   sf::Font arialFont;
   sf::RenderWindow window;
-  std::vector<GameObject> gameObjects;
-
-  void createGameObjects() {
-    Bat bat(50.f, 250.f, window.getSize());
-    bat.shape->setFillColor(sf::Color::Yellow);
-    bat.centerHorizontally();
-
-    Ball ball(100.f, window.getSize());
-    ball.shape->setFillColor(sf::Color::Red);
-    ball.shape->move(500.f, 250.f);
-
-    gameObjects.insert(gameObjects.end(), {ball, bat});
-  }
-
-  void drawGameObjects() {
-    for (GameObject gameObject : gameObjects) {
-      window.draw(*(gameObject.shape));
-    }
-  }
+  int windowSizeX;
+  int windowSizeY;
 };

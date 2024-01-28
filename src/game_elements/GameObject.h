@@ -16,7 +16,9 @@ public:
   float windowSizeY;
   GameObjectPhysics physics;
 
-  GameObject(sf::Shape *shape, sf::Vector2u windowSize) {
+  GameObject(sf::Shape *shape, GameObjectPhysics &physics,
+             sf::Vector2u windowSize)
+      : physics(physics) {
     this->shape = shape;
     this->shape->setPosition(positionX, positionY);
 
@@ -30,7 +32,7 @@ public:
   void move(float offsetX, float offsetY) {
     positionX += offsetX;
     positionY += offsetY;
-    shape->setPosition(positionX, positionY);
+    shape->setPosition(positionX + offsetX, positionY + offsetY);
   }
 
   void centerVertically() {
@@ -55,6 +57,10 @@ public:
     centerVertically();
     centerHorizontally();
   }
+
+  void setPosX(float x) { shape->setPosition(x, shape->getPosition().y); }
+
+  void setPosY(float y) { shape->setPosition(shape->getPosition().x, y); }
 };
 
 #endif

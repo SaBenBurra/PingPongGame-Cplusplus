@@ -14,16 +14,16 @@ public:
     int windowSizeY = window->getSize().y;
 
     float batSizeY = windowSizeY / 100.f;
-    Bat bat(windowSizeX / 8.f, batSizeY, window->getSize());
+    Bat bat(windowSizeX / 8.f, batSizeY, window->getSize(), windowSizeX / 2.f,
+            windowSizeY - batSizeY);
 
     bat.shape->setFillColor(sf::Color::Yellow);
     bat.centerHorizontally();
     bat.setPosY(windowSizeY - batSizeY);
     bat.physics.active = false;
 
-    Ball ball(windowSizeX / 100.f, window->getSize());
+    Ball ball(windowSizeX / 100.f, window->getSize(), 500.f, 250.f);
     ball.shape->setFillColor(sf::Color::Red);
-    ball.shape->setPosition(500.f, 250.f);
     ball.physics.active = true;
 
     gameObjects.insert(gameObjects.end(), {ball, bat});

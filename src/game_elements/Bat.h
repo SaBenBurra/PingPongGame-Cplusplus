@@ -5,7 +5,9 @@
 #include <SFML/Window/Window.hpp>
 class Bat : public GameObject {
 public:
-  Bat(float sizeX, float sizeY, sf::Vector2u windowSize)
+  Bat(float sizeX, float sizeY, sf::Vector2u windowSize, float positionX = 0,
+      float positionY = 0)
       : GameObject(new sf::RectangleShape(sf::Vector2f(sizeX, sizeY)),
-                   *PhysicsManager::ZeroPhysics(), windowSize) {}
+                   *PhysicsManager::ZeroPhysics(), windowSize, positionX,
+                   positionY) {}
 };

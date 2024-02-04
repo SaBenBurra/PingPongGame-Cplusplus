@@ -17,9 +17,11 @@ public:
   GameObjectPhysics physics;
 
   GameObject(sf::Shape *shape, GameObjectPhysics &physics,
-             sf::Vector2u windowSize)
+             sf::Vector2u windowSize, float positionX, float positionY)
       : physics(physics) {
     this->shape = shape;
+    this->positionX = positionX;
+    this->positionY = positionY;
     this->shape->setPosition(positionX, positionY);
 
     sf::FloatRect bounds = shape->getLocalBounds();
@@ -32,7 +34,12 @@ public:
   void move(float offsetX, float offsetY) {
     positionX += offsetX;
     positionY += offsetY;
-    shape->setPosition(positionX + offsetX, positionY + offsetY);
+    shape->setPosition(positionX, positionY);
+  }
+  void moveToCoordinate(float x, float y) {
+    positionX = x;
+    positionY = y;
+    shape->setPosition(x, y);
   }
 
   void centerVertically() {

@@ -1,7 +1,10 @@
 #include "game_elements/GameObjectManager.h"
+#include "physics/PhysicsManager.h"
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
+#include <cstdlib>
 #include <thread>
 
 class GameManager {
@@ -33,11 +36,24 @@ public:
       windowSizeX = window.getSize().x;
       windowSizeY = window.getSize().y;
 
+      GameObject *ball = &gameObjectManager.gameObjects[0];
+      GameObject *bat = &gameObjectManager.gameObjects[1];
+
       sf::Event event;
 
       while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
           window.close();
+        }
+        if (event.type == sf::Event::KeyPressed) {
+          float moveSpeed = 30.f;
+          if (event.key.code == sf::Keyboard::Left)
+            bat->shape->setPosition(bat->shape->getPosition().x - moveSpeed,
+                                    bat->shape->getPosition().y);
+          if (event.key.code == sf::Keyboard::Right)
+
+            bat->shape->setPosition(bat->shape->getPosition().x + moveSpeed,
+                                    bat->shape->getPosition().y);
         }
       }
 
@@ -48,9 +64,17 @@ public:
                       .count();
       float timeDelta = 1 / fps;
 
-      physicsManager.renderPhysics(&gameObjectManager.gameObjects, timeDelta);
+      physicsManager.renderPhysics(&gameObjectManager.gameObjects, timeDelta,
+                                   &window);
 
+      if (ball->shape->getGlobalBounds().intersects(
+              bat->shape->getGlobalBounds())) {
+        ball->physics.velocity.direction.y =
+            ball->physics.velocity.direction.y * -1;
+      }
       gameObjectManager.drawGameObjects(&window);
+
+      checkIfBallTouchsBottom();
 
       window.display();
     }
@@ -63,4 +87,12 @@ private:
   sf::RenderWindow window;
   int windowSizeX;
   int windowSizeY;
+
+  void checkIfBallTouchsBottom() {
+    GameObject *ball = &gameObjectManager.gameObjects[0];
+    sf::FloatRect bounds = ball->shape->getGlobalBounds();
+    if (bounds.top + bounds.height >= window.getSize().y) {
+      abort();
+    }
+  }
 };
